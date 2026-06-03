@@ -15,7 +15,7 @@ Before syncing code, identify only the fields needed for the target path:
 
 - Source repo: `<LOCAL_REPO_PATH>`, `<REPO_REMOTE_URL>`, `<BRANCH_OR_TAG>`, and the commit SHA to deploy.
 - Offline GPU host: SSH alias or `<OFFLINE_GPU_USER>@<OFFLINE_GPU_HOST>`, optional `<OFFLINE_GPU_SSH_PORT>`, and `<OFFLINE_GPU_STORAGE_ROOT>`.
-- Object storage handoff: `<OBJECT_STORAGE_URI>` and the configured upload/download tool when the offline host cannot fetch directly.
+- Object storage handoff: `<OBJECT_STORAGE_URI>` and `tosutil` when the offline host cannot fetch directly and TOS is the selected backend.
 - Direct-download GPU host: SSH alias or `<DIRECT_GPU_USER>@<DIRECT_GPU_HOST>`, optional `<DIRECT_GPU_SSH_PORT>`, and `<DIRECT_GPU_STORAGE_ROOT>`.
 - Credentials: use existing SSH agents, git credential helpers, deploy keys, or environment variables. Never write tokens, private keys, passwords, or access keys into shared files, logs, commands, or final answers.
 
@@ -50,7 +50,7 @@ Before touching any remote checkout:
 
 ## Offline GPU Git Sync
 
-Use direct git access only when the offline host can reach the repository remote through an approved network path. Otherwise stage a git bundle or archive through object storage.
+Use direct git access only when the offline host can reach the repository remote through an approved network path. Otherwise stage a git bundle or archive through object storage. `tosutil` is the public TOS CLI name and can appear in shared examples; actual bucket names, prefixes, and credentials remain private.
 
 Preferred committed-code flow:
 
@@ -65,8 +65,8 @@ Example skeleton:
 
 ```bash
 git -C <LOCAL_REPO_PATH> bundle create <repo-name>.bundle --all
-<object-storage-cli> cp <repo-name>.bundle <OBJECT_STORAGE_URI>/<repo-name>.bundle
-ssh <OFFLINE_GPU_SSH_ALIAS> 'mkdir -p <OFFLINE_GPU_STORAGE_ROOT>/repos && <object-storage-cli> cp <OBJECT_STORAGE_URI>/<repo-name>.bundle <OFFLINE_GPU_STORAGE_ROOT>/repos/'
+tosutil cp <repo-name>.bundle <OBJECT_STORAGE_URI>/<repo-name>.bundle
+ssh <OFFLINE_GPU_SSH_ALIAS> 'mkdir -p <OFFLINE_GPU_STORAGE_ROOT>/repos && tosutil cp <OBJECT_STORAGE_URI>/<repo-name>.bundle <OFFLINE_GPU_STORAGE_ROOT>/repos/'
 ```
 
 For uncommitted changes, create a patch or archive only after the user confirms that local dirty state should be copied. Record the base commit and patch file name so the remote state is auditable.

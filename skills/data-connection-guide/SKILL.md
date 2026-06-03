@@ -12,9 +12,9 @@ This skill routes data movement without embedding private infrastructure details
 Before running transfer commands, identify only the fields needed for the target path:
 
 - Offline GPU host: SSH alias or `<OFFLINE_GPU_USER>@<OFFLINE_GPU_HOST>`, optional `<OFFLINE_GPU_SSH_PORT>`, and `<OFFLINE_GPU_STORAGE_ROOT>`.
-- Object storage handoff: `<OBJECT_STORAGE_URI>` such as `tos://<bucket>/<prefix>` and the configured upload/download tool.
+- Object storage handoff: `<OBJECT_STORAGE_URI>` such as `tos://<bucket>/<prefix>` and `tosutil` when TOS is the selected backend.
 - Direct-download GPU host: SSH alias or `<DIRECT_GPU_USER>@<DIRECT_GPU_HOST>`, optional `<DIRECT_GPU_SSH_PORT>`, and `<DIRECT_GPU_STORAGE_ROOT>`.
-- Mirrors: `<HF_MIRROR_ENDPOINT>`, `<MODEL_REGISTRY_MIRROR>`, and `<PYPI_MIRROR_URL>` when the environment requires mirrors.
+- Public tools and mirrors: `tosutil`, `hfd`, `HF_ENDPOINT=https://hf-mirror.com`, and ModelScope are not sensitive. Use `<PRIVATE_HF_MIRROR_ENDPOINT>`, `<MODEL_REGISTRY_MIRROR>`, and `<PYPI_MIRROR_URL>` only when the environment requires private or organization-specific mirrors.
 - Secrets: use the existing credential provider, shell environment, or host configuration; never write access keys, tokens, passwords, or private keys into files, logs, commands that will be shared, or final answers.
 
 Prefer SSH config aliases and named storage roots over raw private values in prompts and artifacts.
@@ -39,18 +39,18 @@ Use a staged lifecycle:
 6. Delete only the local staging copy for that asset after remote verification succeeds.
 7. Repeat one asset at a time for large transfers so local disk cleanup is deterministic.
 
-For public Hugging Face assets, use the configured mirror endpoint when required by the environment. Clear proxy variables before mirror downloads if proxies could cause a fallback path:
+For public Hugging Face assets, use `hf-mirror.com` when a mirror is required by the environment. Clear proxy variables before mirror downloads if proxies could cause a fallback path:
 
 ```bash
 unset all_proxy ALL_PROXY http_proxy HTTP_PROXY https_proxy HTTPS_PROXY ftp_proxy FTP_PROXY no_proxy NO_PROXY
-HF_ENDPOINT=<HF_MIRROR_ENDPOINT> hfd <org-or-repo> --local-dir <local-staging-dir>
+HF_ENDPOINT=https://hf-mirror.com hfd <org-or-repo> --local-dir <local-staging-dir>
 ```
 
-Use object storage tooling configured for the environment, for example:
+Use `tosutil` for TOS object storage handoff:
 
 ```bash
-<object-storage-cli> cp -r <local-staging-dir> <OBJECT_STORAGE_URI>/<asset-name>
-ssh <OFFLINE_GPU_SSH_ALIAS> '<object-storage-cli> cp -r <OBJECT_STORAGE_URI>/<asset-name> <OFFLINE_GPU_STORAGE_ROOT>/<asset-name>'
+tosutil cp -r <local-staging-dir> <OBJECT_STORAGE_URI>/<asset-name>
+ssh <OFFLINE_GPU_SSH_ALIAS> 'tosutil cp -r <OBJECT_STORAGE_URI>/<asset-name> <OFFLINE_GPU_STORAGE_ROOT>/<asset-name>'
 ```
 
 Keep large files, caches, environments, checkpoints, temporary files, and logs under `<OFFLINE_GPU_STORAGE_ROOT>`. Do not place large work artifacts under `/`, `/root`, or the login user's small home directory.
@@ -63,7 +63,7 @@ Download directly on the target GPU host when the host has network access and en
 
 1. SSH to `<DIRECT_GPU_SSH_ALIAS>`.
 2. Put models, datasets, caches, packages, logs, checkpoints, and environments under `<DIRECT_GPU_STORAGE_ROOT>`.
-3. Use configured mirrors such as `<HF_MIRROR_ENDPOINT>` or `<PYPI_MIRROR_URL>` when required.
+3. Use public mirrors such as `HF_ENDPOINT=https://hf-mirror.com`, or configured private mirrors such as `<PRIVATE_HF_MIRROR_ENDPOINT>` or `<PYPI_MIRROR_URL>` when required.
 4. Verify size, checksum when practical, and expected file count.
 5. Do not route through local staging or object storage unless the user explicitly asks or direct download fails for a reason staging can solve.
 
@@ -72,13 +72,13 @@ Example:
 ```bash
 ssh <DIRECT_GPU_SSH_ALIAS>
 mkdir -p <DIRECT_GPU_STORAGE_ROOT>/models <DIRECT_GPU_STORAGE_ROOT>/cache/pip
-HF_ENDPOINT=<HF_MIRROR_ENDPOINT> hfd <org-or-repo> --local-dir <DIRECT_GPU_STORAGE_ROOT>/models/<asset-name>
+HF_ENDPOINT=https://hf-mirror.com hfd <org-or-repo> --local-dir <DIRECT_GPU_STORAGE_ROOT>/models/<asset-name>
 python -m pip install -i <PYPI_MIRROR_URL> --cache-dir <DIRECT_GPU_STORAGE_ROOT>/cache/pip <package>
 ```
 
 ## Gated Models And Private Assets
 
-For gated Hugging Face assets, prefer an approved model registry mirror or organization-approved export path. If a token is required, pass it through the secure mechanism already used by the environment and avoid printing it. Never paste tokens into a skill, README, shared command transcript, or final answer.
+For gated Hugging Face assets, prefer ModelScope when it has the required public or authorized asset, then use an approved private registry mirror or organization-approved export path when needed. ModelScope itself is not sensitive; private model ids, account names, and tokens are. If a token is required, pass it through the secure mechanism already used by the environment and avoid printing it. Never paste tokens into a skill, README, shared command transcript, or final answer.
 
 If the direct mirror path is unavailable, ask the user which approved source should be used. Do not invent credentials, bypass access controls, or share private model artifacts outside the intended storage boundary.
 

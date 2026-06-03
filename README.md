@@ -38,14 +38,14 @@ Each installable skill lives under `skills/<skill-name>/` and keeps its required
 After this repository is pushed to GitHub, install all shared skills from Codex with the `skill-installer` skill:
 
 ```text
-Use $skill-installer to install benchmark-eval, data-connection-guide, and gpu-repo-sync from <github-owner>/volc-skills at skills/benchmark-eval, skills/data-connection-guide, and skills/gpu-repo-sync
+Use $skill-installer to install benchmark-eval, data-connection-guide, and gpu-repo-sync from milkieTigera/volc-skills at skills/benchmark-eval, skills/data-connection-guide, and skills/gpu-repo-sync
 ```
 
 Equivalent helper command:
 
 ```bash
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
-  --repo <github-owner>/volc-skills \
+  --repo milkieTigera/volc-skills \
   --path skills/benchmark-eval skills/data-connection-guide skills/gpu-repo-sync
 ```
 
@@ -53,7 +53,7 @@ To install only one skill, pass only that path:
 
 ```bash
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
-  --repo <github-owner>/volc-skills \
+  --repo milkieTigera/volc-skills \
   --path skills/benchmark-eval
 ```
 
@@ -118,6 +118,18 @@ Configure `tosutil` manually on each machine that needs to read from or write to
 
 Official references: [tosutil quick start](https://www.volcengine.com/docs/6349/152743) and [configuration file fields](https://www.volcengine.com/docs/6349/152766).
 
+## Public Tooling And Mirrors
+
+These names are public workflow details and can stay in this repository:
+
+- `tosutil`: Volcengine TOS CLI tool name and command examples.
+- `tos://`: TOS URI scheme. Actual bucket names and prefixes are still private unless intentionally published.
+- `hfd`: Hugging Face downloader command.
+- `HF_ENDPOINT=https://hf-mirror.com`: public Hugging Face mirror endpoint commonly used in China network environments.
+- `ModelScope`: public model registry name. Account names, private model ids, and access tokens are still private.
+
+Use placeholders only for values that identify private infrastructure, credentials, project-specific storage, or private artifacts.
+
 ### Manual Install
 
 For local development before pushing to GitHub, copy or symlink a skill directory into your Codex skills directory:
@@ -139,14 +151,13 @@ Fill in these values locally before using the skills:
 
 | Placeholder | Meaning | Keep it where |
 | --- | --- | --- |
-| `<github-owner>` | GitHub user or organization that hosts this public skill repo | README command argument or local install command |
 | `<ACCESS_KEY_ID>` / `<SECRET_ACCESS_KEY>` | Permanent TOS access credentials | Private shell, credential manager, or machine-local `~/.tosutilconfig` |
 | `<TEMP_ACCESS_KEY_ID>` / `<TEMP_SECRET_ACCESS_KEY>` / `<SECURITY_TOKEN>` | Temporary TOS credentials | Private shell or machine-local `~/.tosutilconfig` |
-| `<TOS_ENDPOINT>` | TOS protocol endpoint for the bucket region | Machine-local `tosutil` config |
-| `<TOS_REGION>` | Region for the TOS bucket | Machine-local `tosutil` config |
+| `<TOS_ENDPOINT>` | TOS protocol endpoint for the bucket region; usually public, but region-specific | Machine-local `tosutil` config |
+| `<TOS_REGION>` | Region for the TOS bucket; usually public, but project-specific | Machine-local `tosutil` config |
 | `<TOS_BUCKET_URI>` / `<OBJECT_STORAGE_URI>` | Bucket or prefix such as `tos://<bucket>/<prefix>` | Private project notes or environment variables |
-| `<HF_MIRROR_ENDPOINT>` | Hugging Face-compatible mirror endpoint | Environment variable or private project notes |
-| `<MODEL_REGISTRY_MIRROR>` | Approved model registry mirror for gated/private assets | Private project notes |
+| `<PRIVATE_HF_MIRROR_ENDPOINT>` | Organization-private Hugging Face-compatible mirror endpoint, if not using public `https://hf-mirror.com` | Environment variable or private project notes |
+| `<MODEL_REGISTRY_MIRROR>` | Organization-private registry mirror for gated/private assets, if not using public ModelScope | Private project notes |
 | `<PYPI_MIRROR_URL>` | Approved Python package index mirror | Environment variable, pip config, or private project notes |
 | `<OFFLINE_GPU_SSH_ALIAS>` | SSH alias for the offline GPU host | `~/.ssh/config` |
 | `<OFFLINE_GPU_USER>` / `<OFFLINE_GPU_HOST>` / `<OFFLINE_GPU_SSH_PORT>` | Offline GPU login details when no SSH alias exists | `~/.ssh/config` or private project notes |
