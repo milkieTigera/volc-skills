@@ -1,0 +1,4 @@
+interface:
+  display_name: "Data Connection Guide"
+  short_description: "Route GPU data transfers safely"
+  default_prompt: "Use $data-connection-guide to choose a sanitized route for moving models, datasets, packages, checkpoints, or caches between local staging, object storage, offline GPU storage, and direct-download GPU hosts."
