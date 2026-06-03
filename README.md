@@ -130,3 +130,39 @@ ln -s "$PWD/skills/gpu-repo-sync" "${CODEX_HOME:-$HOME/.codex}/skills/gpu-repo-s
 ```
 
 The shared skills intentionally use placeholders for hosts, paths, buckets, mirrors, and credentials. Keep site-specific values in local environment variables, SSH config, project notes, or a private overlay that is not committed.
+
+## Private Values To Fill In
+
+This repository is designed to stay public. Do not replace placeholders with real private values in committed files. Users should provide site-specific values through local environment variables, SSH config, machine-local config files, private runbooks, or a private overlay repository.
+
+Fill in these values locally before using the skills:
+
+| Placeholder | Meaning | Keep it where |
+| --- | --- | --- |
+| `<github-owner>` | GitHub user or organization that hosts this public skill repo | README command argument or local install command |
+| `<ACCESS_KEY_ID>` / `<SECRET_ACCESS_KEY>` | Permanent TOS access credentials | Private shell, credential manager, or machine-local `~/.tosutilconfig` |
+| `<TEMP_ACCESS_KEY_ID>` / `<TEMP_SECRET_ACCESS_KEY>` / `<SECURITY_TOKEN>` | Temporary TOS credentials | Private shell or machine-local `~/.tosutilconfig` |
+| `<TOS_ENDPOINT>` | TOS protocol endpoint for the bucket region | Machine-local `tosutil` config |
+| `<TOS_REGION>` | Region for the TOS bucket | Machine-local `tosutil` config |
+| `<TOS_BUCKET_URI>` / `<OBJECT_STORAGE_URI>` | Bucket or prefix such as `tos://<bucket>/<prefix>` | Private project notes or environment variables |
+| `<HF_MIRROR_ENDPOINT>` | Hugging Face-compatible mirror endpoint | Environment variable or private project notes |
+| `<MODEL_REGISTRY_MIRROR>` | Approved model registry mirror for gated/private assets | Private project notes |
+| `<PYPI_MIRROR_URL>` | Approved Python package index mirror | Environment variable, pip config, or private project notes |
+| `<OFFLINE_GPU_SSH_ALIAS>` | SSH alias for the offline GPU host | `~/.ssh/config` |
+| `<OFFLINE_GPU_USER>` / `<OFFLINE_GPU_HOST>` / `<OFFLINE_GPU_SSH_PORT>` | Offline GPU login details when no SSH alias exists | `~/.ssh/config` or private project notes |
+| `<OFFLINE_GPU_STORAGE_ROOT>` | Durable high-capacity storage root on the offline GPU host | Private project notes or host environment |
+| `<DIRECT_GPU_SSH_ALIAS>` | SSH alias for the direct-download GPU host | `~/.ssh/config` |
+| `<DIRECT_GPU_USER>` / `<DIRECT_GPU_HOST>` / `<DIRECT_GPU_SSH_PORT>` | Direct-download GPU login details when no SSH alias exists | `~/.ssh/config` or private project notes |
+| `<DIRECT_GPU_STORAGE_ROOT>` | Durable high-capacity storage root on the direct-download GPU host | Private project notes or host environment |
+| `<LOCAL_REPO_PATH>` | Local source repository path used for repo sync | Local shell variable or command argument |
+| `<REPO_REMOTE_URL>` | Git remote URL for a project repository | Git config or private project notes if private |
+| `<BRANCH_OR_TAG>` / `<BRANCH_OR_TAG_OR_COMMIT>` | Version to sync or deploy | Command argument |
+
+Before publishing changes to this repository, scan for real private values:
+
+```bash
+git status --short --branch
+rg -n '(<real-host>|<real-ip>|<real-user>|<real-bucket>|<real-token>|<real-storage-root>)' .
+```
+
+The committed files should contain placeholders and public documentation only.
