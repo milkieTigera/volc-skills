@@ -1,0 +1,4 @@
+interface:
+  display_name: "Benchmark Eval"
+  short_description: "Plan and monitor benchmark runs"
+  default_prompt: "Use $benchmark-eval to plan, launch, monitor, and summarize high-throughput benchmark evaluation runs across tasks, workers, GPUs, and logs."
