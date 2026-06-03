@@ -1,6 +1,6 @@
 # volc-skills
 
-Shared Codex skills for Volcengine and GPU workflow operations.
+Codex skills for Volcengine and GPU workflow operations.
 
 ## Layout
 
@@ -133,7 +133,7 @@ The shared skills intentionally use placeholders for hosts, paths, buckets, mirr
 
 ## Private Values To Fill In
 
-This repository is designed to stay public. Do not replace placeholders with real private values in committed files. Users should provide site-specific values through local environment variables, SSH config, machine-local config files, private runbooks, or a private overlay repository.
+Users should provide site-specific values through local environment variables, SSH config, machine-local config files, private runbooks, or a private overlay repository.
 
 Fill in these values locally before using the skills:
 
@@ -158,11 +158,4 @@ Fill in these values locally before using the skills:
 | `<REPO_REMOTE_URL>` | Git remote URL for a project repository | Git config or private project notes if private |
 | `<BRANCH_OR_TAG>` / `<BRANCH_OR_TAG_OR_COMMIT>` | Version to sync or deploy | Command argument |
 
-Before publishing changes to this repository, scan for real private values:
 
-```bash
-git status --short --branch
-rg -n '(<real-host>|<real-ip>|<real-user>|<real-bucket>|<real-token>|<real-storage-root>)' .
-```
-
-The committed files should contain placeholders and public documentation only.
