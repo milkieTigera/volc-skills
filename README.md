@@ -21,9 +21,33 @@ Each installable skill lives under `skills/<skill-name>/` and keeps its required
 
 - `data-connection-guide`: a sanitized router for choosing data-transfer paths between local staging, object storage, offline GPU storage, and direct-download GPU hosts.
 
-## Install Locally
+## Installation
 
-Copy or symlink a skill directory into your Codex skills directory:
+### With Skill Installer
+
+After this repository is pushed to GitHub, install the skill from Codex with the `skill-installer` skill:
+
+```text
+Use $skill-installer to install data-connection-guide from <github-owner>/volc-skills at skills/data-connection-guide
+```
+
+Equivalent helper command:
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
+  --repo <github-owner>/volc-skills \
+  --path skills/data-connection-guide
+```
+
+For a branch or tag other than `main`, add `--ref <branch-or-tag>`.
+
+For a private GitHub repo, make sure existing git credentials work or set `GITHUB_TOKEN`/`GH_TOKEN` before installing. Restart Codex after installation so the new skill is discovered.
+
+No extra repository manifest is required. The important part is that the installer path points to a directory containing `SKILL.md`.
+
+### Manual Install
+
+For local development before pushing to GitHub, copy or symlink a skill directory into your Codex skills directory:
 
 ```bash
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
