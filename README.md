@@ -63,6 +63,61 @@ For a private GitHub repo, make sure existing git credentials work or set `GITHU
 
 No extra repository manifest is required. The important part is that the installer path points to a directory containing `SKILL.md`.
 
+## Manual TOS Setup
+
+Configure `tosutil` manually on each machine that needs to read from or write to TOS. Local workstations, offline GPU hosts, and direct-download GPU hosts each have their own home directory and their own `~/.tosutilconfig`.
+
+1. Install `tosutil` using the official package or binary for the target OS, then make it executable on Linux or macOS:
+
+   ```bash
+   chmod +x ./tosutil
+   ./tosutil version
+   ```
+
+2. Collect the non-secret routing values for the target bucket:
+
+   ```text
+   <TOS_ENDPOINT>    # TOS protocol endpoint, not an S3-compatible endpoint
+   <TOS_REGION>      # Region for the bucket, for example cn-beijing
+   <TOS_BUCKET_URI>  # Bucket or prefix, for example tos://<bucket>/<prefix>
+   ```
+
+3. Configure permanent credentials in a private shell. Do not paste real keys into shared docs, logs, issue comments, or chat transcripts:
+
+   ```bash
+   ./tosutil config \
+     -i '<ACCESS_KEY_ID>' \
+     -k '<SECRET_ACCESS_KEY>' \
+     -e '<TOS_ENDPOINT>' \
+     -re '<TOS_REGION>'
+   ```
+
+   For temporary credentials, include the security token:
+
+   ```bash
+   ./tosutil config \
+     -i '<TEMP_ACCESS_KEY_ID>' \
+     -k '<TEMP_SECRET_ACCESS_KEY>' \
+     -t '<SECURITY_TOKEN>' \
+     -e '<TOS_ENDPOINT>' \
+     -re '<TOS_REGION>'
+   ```
+
+4. Verify the config without exposing secrets:
+
+   ```bash
+   ./tosutil version
+   ./tosutil ls '<TOS_BUCKET_URI>'
+   ```
+
+5. Keep credentials local:
+
+   - Do not commit `~/.tosutilconfig`, shell history, transfer logs, or credential screenshots.
+   - Prefer temporary credentials for shared or short-lived machines.
+   - If a key was pasted into a shared channel or committed by mistake, revoke and rotate it before continuing.
+
+Official references: [tosutil quick start](https://www.volcengine.com/docs/6349/152743) and [configuration file fields](https://www.volcengine.com/docs/6349/152766).
+
 ### Manual Install
 
 For local development before pushing to GitHub, copy or symlink a skill directory into your Codex skills directory:
