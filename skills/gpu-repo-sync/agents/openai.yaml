@@ -1,0 +1,4 @@
+interface:
+  display_name: "GPU Repo Sync"
+  short_description: "Route GPU repo sync targets"
+  default_prompt: "Use $gpu-repo-sync to choose a sanitized route for syncing repositories and worktrees across offline GPU hosts, direct-download GPU hosts, and local workstations."
